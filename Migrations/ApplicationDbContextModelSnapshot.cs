@@ -39,8 +39,8 @@ namespace EmployeeAdminPortal.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Salary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Salary")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

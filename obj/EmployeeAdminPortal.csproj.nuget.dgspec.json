@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Administrator\\Desktop\\c#\\EmployeeAdminPortal\\EmployeeAdminPortal.csproj": {}
+    "C:\\Users\\Administrator\\Desktop\\c#\\Asp.Net-Crud\\EmployeeAdminPortal.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Administrator\\Desktop\\c#\\EmployeeAdminPortal\\EmployeeAdminPortal.csproj": {
+    "C:\\Users\\Administrator\\Desktop\\c#\\Asp.Net-Crud\\EmployeeAdminPortal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\c#\\EmployeeAdminPortal\\EmployeeAdminPortal.csproj",
+        "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\c#\\Asp.Net-Crud\\EmployeeAdminPortal.csproj",
         "projectName": "EmployeeAdminPortal",
-        "projectPath": "C:\\Users\\Administrator\\Desktop\\c#\\EmployeeAdminPortal\\EmployeeAdminPortal.csproj",
+        "projectPath": "C:\\Users\\Administrator\\Desktop\\c#\\Asp.Net-Crud\\EmployeeAdminPortal.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Administrator\\Desktop\\c#\\EmployeeAdminPortal\\obj\\",
+        "outputPath": "C:\\Users\\Administrator\\Desktop\\c#\\Asp.Net-Crud\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -46,6 +46,22 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[8.0.6, )"
@@ -55,6 +71,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.6, )"
+            },
+            "Microsoft.OpenApi": {
+              "target": "Package",
+              "version": "[1.6.15, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
