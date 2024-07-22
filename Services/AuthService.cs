@@ -1,16 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using EmployeeAdminPortal.Core;
 using EmployeeAdminPortal.Dtos;
 using EmployeeAdminPortal.Interfaces;
+using EmployeeAdminPortal.Models.Entities;
 using EmployeeAdminPortal.OtherObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using StaticUserRoles = EmployeeAdminPortal.Models.Entities.StaticUserRoles;
 
-namespace EmployeeAdminPortal.Services;
-
- public class AuthService : IAuthService
+namespace EmployeeAdminPortal.Services
+{
+    public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -23,29 +24,20 @@ namespace EmployeeAdminPortal.Services;
             _configuration = configuration;
         }
 
-
         public async Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
 
-            if (user is null)
-                return new AuthServiceResponseDto()
+            if (user is null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            {
+                return new AuthServiceResponseDto
                 {
                     IsSucceed = false,
                     Message = "Invalid Credentials"
                 };
-
-            var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-
-            if (!isPasswordCorrect)
-                return new AuthServiceResponseDto()
-                {
-                    IsSucceed = false,
-                    Message = "Invalid Credentials"
-                };
+            }
 
             var userRoles = await _userManager.GetRolesAsync(user);
-
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -55,14 +47,11 @@ namespace EmployeeAdminPortal.Services;
                 new Claim("LastName", user.LastName),
             };
 
-            foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
+            authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var token = GenerateNewJsonWebToken(authClaims);
 
-            return new AuthServiceResponseDto()
+            return new AuthServiceResponseDto
             {
                 IsSucceed = true,
                 Message = token
@@ -74,15 +63,17 @@ namespace EmployeeAdminPortal.Services;
             var user = await _userManager.FindByNameAsync(updatePermissionDto.UserName);
 
             if (user is null)
-                return new AuthServiceResponseDto()
+            {
+                return new AuthServiceResponseDto
                 {
                     IsSucceed = false,
-                    Message = "Invalid User name!!!!!!!!"
+                    Message = "Invalid User name"
                 };
+            }
 
             await _userManager.AddToRoleAsync(user, StaticUserRoles.ADMIN);
 
-            return new AuthServiceResponseDto()
+            return new AuthServiceResponseDto
             {
                 IsSucceed = true,
                 Message = "User is now an ADMIN"
@@ -94,15 +85,17 @@ namespace EmployeeAdminPortal.Services;
             var user = await _userManager.FindByNameAsync(updatePermissionDto.UserName);
 
             if (user is null)
-                return new AuthServiceResponseDto()
+            {
+                return new AuthServiceResponseDto
                 {
                     IsSucceed = false,
-                    Message = "Invalid User name!!!!!!!!"
+                    Message = "Invalid User name"
                 };
+            }
 
             await _userManager.AddToRoleAsync(user, StaticUserRoles.OWNER);
 
-            return new AuthServiceResponseDto()
+            return new AuthServiceResponseDto
             {
                 IsSucceed = true,
                 Message = "User is now an OWNER"
@@ -114,14 +107,15 @@ namespace EmployeeAdminPortal.Services;
             var isExistsUser = await _userManager.FindByNameAsync(registerDto.UserName);
 
             if (isExistsUser != null)
-                return new AuthServiceResponseDto()
+            {
+                return new AuthServiceResponseDto
                 {
                     IsSucceed = false,
                     Message = "UserName Already Exists"
                 };
-            
+            }
 
-            ApplicationUser newUser = new ApplicationUser()
+            var newUser = new ApplicationUser
             {
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
@@ -134,12 +128,8 @@ namespace EmployeeAdminPortal.Services;
 
             if (!createUserResult.Succeeded)
             {
-                var errorString = "User Creation Failed Beacause: ";
-                foreach (var error in createUserResult.Errors)
-                {
-                    errorString += " # " + error.Description;
-                }
-                return new AuthServiceResponseDto()
+                var errorString = "User Creation Failed Because: " + string.Join(", ", createUserResult.Errors.Select(e => e.Description));
+                return new AuthServiceResponseDto
                 {
                     IsSucceed = false,
                     Message = errorString
@@ -149,7 +139,7 @@ namespace EmployeeAdminPortal.Services;
             // Add a Default USER Role to all users
             await _userManager.AddToRoleAsync(newUser, StaticUserRoles.USER);
 
-            return new AuthServiceResponseDto()
+            return new AuthServiceResponseDto
             {
                 IsSucceed = true,
                 Message = "User Created Successfully"
@@ -163,37 +153,38 @@ namespace EmployeeAdminPortal.Services;
             bool isUserRoleExists = await _roleManager.RoleExistsAsync(StaticUserRoles.USER);
 
             if (isOwnerRoleExists && isAdminRoleExists && isUserRoleExists)
-                return new AuthServiceResponseDto()
+            {
+                return new AuthServiceResponseDto
                 {
                     IsSucceed = true,
                     Message = "Roles Seeding is Already Done"
                 };
+            }
 
             await _roleManager.CreateAsync(new IdentityRole(StaticUserRoles.USER));
             await _roleManager.CreateAsync(new IdentityRole(StaticUserRoles.ADMIN));
             await _roleManager.CreateAsync(new IdentityRole(StaticUserRoles.OWNER));
-          
-            return new AuthServiceResponseDto()
+
+            return new AuthServiceResponseDto
             {
                 IsSucceed = true,
                 Message = "Role Seeding Done Successfully"
             };
         }
 
-        private string GenerateNewJsonWebToken(List<Claim> claims)
+        private string GenerateNewJsonWebToken(IEnumerable<Claim> claims)
         {
             var authSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var tokenObject = new JwtSecurityToken(
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(1),
-                    claims: claims,
-                    signingCredentials: new SigningCredentials(authSecret, SecurityAlgorithms.HmacSha256)
-                );
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(1),
+                claims: claims,
+                signingCredentials: new SigningCredentials(authSecret, SecurityAlgorithms.HmacSha256)
+            );
 
-            string token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
-
-            return token;
+            return new JwtSecurityTokenHandler().WriteToken(tokenObject);
         }
     }
+}

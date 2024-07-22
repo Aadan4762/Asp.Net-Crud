@@ -1,6 +1,7 @@
 ﻿using EmployeeAdminPortal.Data;
 using EmployeeAdminPortal.Models;
 using EmployeeAdminPortal.Models.Entities;
+using Microsoft.AspNetCore.Authorization; // Add this namespace
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,24 +9,26 @@ namespace EmployeeAdminPortal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // Add this attribute to require authentication
     public class EmployeesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
 
-        //constructor dependancy injection
+        // Constructor for dependency injection
         public EmployeesController(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
+        // Get all employees
         [HttpGet]
-         public IActionResult GetAllEmployees()
+        public IActionResult GetAllEmployees()
         {
-            //conecting to the database by using dbContext
             var allEmployees = dbContext.Employees.ToList();
-            return Ok(allEmployees); ;
+            return Ok(allEmployees);
         }
 
+        // Get employee by ID
         [HttpGet]
         [Route("{id:guid}")]
         public IActionResult GetEmployeeById(Guid id)
@@ -38,8 +41,7 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(employee);
         }
 
-
-
+        // Add a new employee
         [HttpPost]
         public IActionResult AddEmployee(AddEmployeeDto addEmployeeDto)
         {
@@ -56,6 +58,7 @@ namespace EmployeeAdminPortal.Controllers
             return Ok(employeeEntity);
         }
 
+        // Update an existing employee
         [HttpPut]
         [Route("{id:guid}")]
         public IActionResult UpdateEmployee(Guid id, UpdateEmployeeDto updateEmployeeDto)
@@ -72,11 +75,11 @@ namespace EmployeeAdminPortal.Controllers
             employee.Salary = updateEmployeeDto.Salary;
             dbContext.SaveChanges();
             return Ok(employee);
-
         }
+
+        // Delete an employee
         [HttpDelete]
         [Route("{id:guid}")]
-
         public IActionResult DeleteEmployee(Guid id)
         {
             var employee = dbContext.Employees.Find(id);
@@ -86,10 +89,7 @@ namespace EmployeeAdminPortal.Controllers
             }
             dbContext.Employees.Remove(employee);
             dbContext.SaveChanges();
-            
             return Ok();
         }
-
-
     }
 }
