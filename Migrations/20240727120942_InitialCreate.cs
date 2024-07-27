@@ -9,7 +9,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace EmployeeAdminPortal.Migrations
 {
     /// <inheritdoc />
-    public partial class Migrations : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -73,6 +73,21 @@ namespace EmployeeAdminPortal.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: false),
+                    School = table.Column<string>(type: "longtext", nullable: false),
+                    Grade = table.Column<string>(type: "longtext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -192,9 +207,9 @@ namespace EmployeeAdminPortal.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "26f74cca-1dab-4883-98b0-b1071793c4ff", null, "Owner", "OWNER" },
-                    { "2cc63568-1c4d-4b0f-8f4e-e562b9bfaf44", null, "User", "USER" },
-                    { "684f74e5-11c7-4834-9ba4-4c5740a8b015", null, "Admin", "ADMIN" }
+                    { "250b977f-7137-43ed-81ee-887118a66809", null, "Owner", "OWNER" },
+                    { "602ff97e-09d4-4343-9ee1-e3ca560e6e5e", null, "User", "USER" },
+                    { "ef97d4fa-f94d-4ff3-b667-53cd8113c6d1", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -255,6 +270,9 @@ namespace EmployeeAdminPortal.Migrations
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Students");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

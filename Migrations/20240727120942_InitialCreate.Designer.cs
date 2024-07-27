@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeAdminPortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240722084441_Migrations")]
-    partial class Migrations
+    [Migration("20240727120942_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,6 +119,28 @@ namespace EmployeeAdminPortal.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("EmployeeAdminPortal.Models.Entities.Student", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Grade")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("School")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Students");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -147,19 +169,19 @@ namespace EmployeeAdminPortal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2cc63568-1c4d-4b0f-8f4e-e562b9bfaf44",
+                            Id = "602ff97e-09d4-4343-9ee1-e3ca560e6e5e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "684f74e5-11c7-4834-9ba4-4c5740a8b015",
+                            Id = "ef97d4fa-f94d-4ff3-b667-53cd8113c6d1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "26f74cca-1dab-4883-98b0-b1071793c4ff",
+                            Id = "250b977f-7137-43ed-81ee-887118a66809",
                             Name = "Owner",
                             NormalizedName = "OWNER"
                         });
