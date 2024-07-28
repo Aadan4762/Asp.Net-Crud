@@ -1,2 +1,10 @@
 ﻿# Asp.Net-Crud
-Employee Asp.Net CRUD operation
+ Asp.Net CRUD operation
+#Modules: 
+  Employee
+  Student
+  User
+#Security:
+  Jwt Security 
+  Tokens based security
+  Role based API
