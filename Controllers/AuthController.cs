@@ -53,7 +53,29 @@ namespace EmployeeAdminPortal.Controllers;
 
             return Unauthorized(loginResult);
         }
+        
+        //generate access token
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRefreshDto tokenRefreshDto)
+        {
+            if (tokenRefreshDto == null || string.IsNullOrEmpty(tokenRefreshDto.RefreshToken))
+            {
+                return BadRequest(new AuthServiceResponseDto
+                {
+                    IsSucceed = false,
+                    Message = "Invalid request"
+                });
+            }
 
+            var response = await _authService.RefreshTokenAsync(tokenRefreshDto);
+
+            if (!response.IsSucceed)
+            {
+                return Unauthorized(response);
+            }
+
+            return Ok(response);
+        }
         
 
         // Route -> make user -> admin

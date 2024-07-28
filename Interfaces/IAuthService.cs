@@ -9,5 +9,6 @@ namespace EmployeeAdminPortal.Interfaces
         Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto);
         Task<AuthServiceResponseDto> MakeAdminAsync(UpdatePermissionDto updatePermissionDto);
         Task<AuthServiceResponseDto> MakeOwnerAsync(UpdatePermissionDto updatePermissionDto);
+        Task<AuthServiceResponseDto> RefreshTokenAsync(TokenRefreshDto tokenRefreshDto);
     }
 }

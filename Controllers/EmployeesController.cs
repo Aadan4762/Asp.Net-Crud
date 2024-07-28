@@ -45,7 +45,7 @@ namespace EmployeeAdminPortal.Controllers
 
         // Add a new employee
         [HttpPost]
-        [Authorize(Roles = $"{StaticUserRoles.ADMIN}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER},{StaticUserRoles.USER}")]
         public IActionResult AddEmployee(AddEmployeeDto addEmployeeDto)
         {
             var employeeEntity = new Employee()

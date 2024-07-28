@@ -49,14 +49,67 @@ namespace EmployeeAdminPortal.Services
 
             authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            var token = GenerateNewJsonWebToken(authClaims);
+            var accessToken = GenerateNewJsonWebToken(authClaims, 1); // Access token with 1 hour expiry
+            var refreshToken = GenerateNewJsonWebToken(authClaims, 24 * 7); // Refresh token with 7 days expiry
 
             return new AuthServiceResponseDto
             {
                 IsSucceed = true,
-                Message = token
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                Message = "Login successful"
             };
         }
+        
+        public async Task<AuthServiceResponseDto> RefreshTokenAsync(TokenRefreshDto tokenRefreshDto)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken validatedToken;
+            var authSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(tokenRefreshDto.RefreshToken, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _configuration["JWT:ValidIssuer"],
+                    ValidAudience = _configuration["JWT:ValidAudience"],
+                    IssuerSigningKey = authSecret,
+                    ClockSkew = TimeSpan.Zero // Remove delay of token when expire
+                }, out validatedToken);
+
+                var jwtToken = validatedToken as JwtSecurityToken;
+                if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                    return new AuthServiceResponseDto
+                    {
+                        IsSucceed = false,
+                        Message = "Invalid token"
+                    };
+
+                // Generate new access token
+                var authClaims = principal.Claims;
+                var newAccessToken = GenerateNewJsonWebToken(authClaims, 1); // Access token with 1 hour expiry
+
+                return new AuthServiceResponseDto
+                {
+                    IsSucceed = true,
+                    AccessToken = newAccessToken,
+                    Message = "Token refreshed successfully"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new AuthServiceResponseDto
+                {
+                    IsSucceed = false,
+                    Message = "Invalid token"
+                };
+            }
+        }
+        
 
         public async Task<AuthServiceResponseDto> MakeAdminAsync(UpdatePermissionDto updatePermissionDto)
         {
@@ -172,14 +225,14 @@ namespace EmployeeAdminPortal.Services
             };
         }
 
-        private string GenerateNewJsonWebToken(IEnumerable<Claim> claims)
+        private string GenerateNewJsonWebToken(IEnumerable<Claim> claims, int hours)
         {
             var authSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var tokenObject = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddHours(hours),
                 claims: claims,
                 signingCredentials: new SigningCredentials(authSecret, SecurityAlgorithms.HmacSha256)
             );
