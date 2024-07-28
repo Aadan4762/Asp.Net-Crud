@@ -22,6 +22,7 @@ namespace EmployeeAdminPortal.Controllers
 
         // Get all employees
         [HttpGet]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER}")]
         public IActionResult GetAllEmployees()
         {
             var allEmployees = dbContext.Employees.ToList();
@@ -31,6 +32,7 @@ namespace EmployeeAdminPortal.Controllers
         // Get employee by ID
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER},{StaticUserRoles.USER}")]
         public IActionResult GetEmployeeById(Guid id)
         {
             var employee = dbContext.Employees.Find(id);
@@ -43,6 +45,7 @@ namespace EmployeeAdminPortal.Controllers
 
         // Add a new employee
         [HttpPost]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN}")]
         public IActionResult AddEmployee(AddEmployeeDto addEmployeeDto)
         {
             var employeeEntity = new Employee()
@@ -61,6 +64,7 @@ namespace EmployeeAdminPortal.Controllers
         // Update an existing employee
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN}")]
         public IActionResult UpdateEmployee(Guid id, UpdateEmployeeDto updateEmployeeDto)
         {
             var employee = dbContext.Employees.Find(id);
@@ -80,6 +84,7 @@ namespace EmployeeAdminPortal.Controllers
         // Delete an employee
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER},{StaticUserRoles.USER}")]
         public IActionResult DeleteEmployee(Guid id)
         {
             var employee = dbContext.Employees.Find(id);

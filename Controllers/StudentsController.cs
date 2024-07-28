@@ -30,6 +30,7 @@ public class StudentsController : Controller
         // Get students by ID
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER},{StaticUserRoles.USER}")]
         public IActionResult GetStudentById(Guid id)
         {
             var student = dbContext.Students.Find(id);
@@ -42,6 +43,7 @@ public class StudentsController : Controller
 
         // Add a new student
         [HttpPost]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER}")]
         public IActionResult AddStudent(AddStudentDto addStudentDto)
         {
             var studentEntity = new Student()
@@ -59,6 +61,7 @@ public class StudentsController : Controller
         // Update an existing student
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER},{StaticUserRoles.USER}")]
         public IActionResult UpdateStudent(Guid id, UpdateStudentDto updateStudentDto)
         {
             var student = dbContext.Students.Find(id);
@@ -77,6 +80,7 @@ public class StudentsController : Controller
         // Delete an student
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = $"{StaticUserRoles.ADMIN},{StaticUserRoles.OWNER},{StaticUserRoles.USER}")]
         public IActionResult DeleteStudent(Guid id)
         {
             var student = dbContext.Students.Find(id);

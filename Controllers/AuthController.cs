@@ -21,9 +21,9 @@ namespace EmployeeAdminPortal.Controllers;
         [Route("seed-roles")]
         public async Task<IActionResult> SeedRoles()
         {
-             var seerRoles = await _authService.SeedRolesAsync();
+             var seedRoles = await _authService.SeedRolesAsync();
 
-            return Ok(seerRoles);
+            return Ok(seedRoles);
         }
 
 
