@@ -207,9 +207,9 @@ namespace EmployeeAdminPortal.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "250b977f-7137-43ed-81ee-887118a66809", null, "Owner", "OWNER" },
-                    { "602ff97e-09d4-4343-9ee1-e3ca560e6e5e", null, "User", "USER" },
-                    { "ef97d4fa-f94d-4ff3-b667-53cd8113c6d1", null, "Admin", "ADMIN" }
+                    { "165c3798-b4b5-4ae7-992e-144b37039263", null, "User", "USER" },
+                    { "1b1dd7ae-5d55-4648-83f9-a4490f5b09ef", null, "Admin", "ADMIN" },
+                    { "62851f95-60fa-4e3e-be67-2e4f45cbf3b2", null, "Owner", "OWNER" }
                 });
 
             migrationBuilder.CreateIndex(

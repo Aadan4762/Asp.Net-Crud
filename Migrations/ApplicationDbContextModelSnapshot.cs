@@ -166,19 +166,19 @@ namespace EmployeeAdminPortal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "602ff97e-09d4-4343-9ee1-e3ca560e6e5e",
+                            Id = "165c3798-b4b5-4ae7-992e-144b37039263",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "ef97d4fa-f94d-4ff3-b667-53cd8113c6d1",
+                            Id = "1b1dd7ae-5d55-4648-83f9-a4490f5b09ef",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "250b977f-7137-43ed-81ee-887118a66809",
+                            Id = "62851f95-60fa-4e3e-be67-2e4f45cbf3b2",
                             Name = "Owner",
                             NormalizedName = "OWNER"
                         });

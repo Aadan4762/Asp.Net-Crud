@@ -61,7 +61,7 @@ namespace EmployeeAdminPortal.Services
             };
         }
         
-        public async Task<AuthServiceResponseDto> RefreshTokenAsync(TokenRefreshDto tokenRefreshDto)
+        public async Task<RefreshAuthResponseDto> RefreshTokenAsync(TokenRefreshDto tokenRefreshDto)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken validatedToken;
@@ -83,7 +83,7 @@ namespace EmployeeAdminPortal.Services
 
                 var jwtToken = validatedToken as JwtSecurityToken;
                 if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                    return new AuthServiceResponseDto
+                    return new RefreshAuthResponseDto()
                     {
                         IsSucceed = false,
                         Message = "Invalid token"
@@ -93,7 +93,7 @@ namespace EmployeeAdminPortal.Services
                 var authClaims = principal.Claims;
                 var newAccessToken = GenerateNewJsonWebToken(authClaims, 1); // Access token with 1 hour expiry
 
-                return new AuthServiceResponseDto
+                return new RefreshAuthResponseDto()
                 {
                     IsSucceed = true,
                     AccessToken = newAccessToken,
@@ -102,7 +102,7 @@ namespace EmployeeAdminPortal.Services
             }
             catch (Exception ex)
             {
-                return new AuthServiceResponseDto
+                return new RefreshAuthResponseDto()
                 {
                     IsSucceed = false,
                     Message = "Invalid token"
